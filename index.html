@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparativo de Veículos Elétricos e Híbridos</title>
+    <style>
+      :root {
+        --primary-color: #0d6efd;
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-color: #212529;
+        --border-color: #dee2e6;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1350px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #1a252f;
+      }
+
+      .controls {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+      }
+
+      .search-box,
+      .filter-box {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        background: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      th,
+      td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      th {
+        background-color: #e9ecef;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      tr:hover {
+        background-color: #f1f3f5;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .badge-bev {
+        background-color: #198754;
+      } /* Verde para Elétrico */
+      .badge-phev {
+        background-color: #0d6efd;
+      } /* Azul para Plug-in */
+      .badge-hev {
+        background-color: #fd7e14;
+      } /* Laranja para Híbrido Pleno */
+      .badge-reev {
+        background-color: #6f42c1;
+      } /* Roxo para REEV */
+
+      .price {
+        font-weight: bold;
+        color: #0f5132;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 20px;
+        display: none;
+        color: #6c757d;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="container">
+      <h1>Guia de Veículos Elétricos & Híbridos</h1>
+
+      <!-- Controles de Pesquisa, Filtro e Ordenação -->
+      <div class="controls">
+        <div class="search-box">
+          <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Pesquisar por modelo, marca ou detalhes...">
+        </div>
+        <div class="filter-box">
+          <select id="brandFilter" onchange="filterData()">
+            <option value="">Todas as Marcas</option>
+            <option value="JAECOO">JAECOO</option>
+            <option value="MG">MG</option>
+            <option value="BYD">BYD</option>
+            <option value="Leapmotor">Leapmotor</option>
+            <option value="GAC">GAC</option>
+            <option value="Geely">Geely</option>
+          </select>
+        </div>
+        <div class="filter-box">
+          <select id="typeFilter" onchange="filterData()">
+            <option value="">Todas as Propulsões</option>
+            <option value="BEV">Elétrico (BEV)</option>
+            <option value="PHEV">Híbrido Plug-in (PHEV)</option>
+            <option value="HEV">Híbrido Pleno (HEV)</option>
+            <option value="REEV">Extensor de Alcance (REEV)</option>
+          </select>
+        </div>
+        <div class="filter-box">
+          <select id="sortSelect" onchange="filterData()">
+            <option value="">Ordenar por...</option>
+            <option value="price-asc">Preço: Menor para Maior</option>
+            <option value="price-desc">Preço: Maior para Menor</option>
+            <option value="power-desc">Potência: Maior para Menor</option>
+            <option value="trunk-desc">Porta-malas: Maior para Menor</option>
+            <option value="brand">Marca (A-Z)</option>
+            <option value="type">Propulsão</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tabela do Relatório -->
+      <div class="table-container">
+        <table id="carTable">
+          <thead>
+            <tr>
+              <th>Marca</th>
+              <th>Modelo / Versão</th>
+              <th>Propulsão</th>
+              <th>Preço (R$)</th>
+              <th>Porta-malas</th>
+              <th>Potência & Torque</th>
+              <th>Autonomia / Consumo</th>
+              <th>Destaques / Recursos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- JAECOO -->
+            <tr data-brand="JAECOO" data-type="HEV" data-trunk="410" data-power="224">
+              <td><strong>JAECOO</strong></td>
+              <td>5 SHS-H Confort</td>
+              <td><span class="badge badge-hev">HEV</span></td>
+              <td class="price">R$ 154.990,00</td>
+              <td>410 L</td>
+              <td>224 cv / 301 Nm</td>
+              <td>15,5 km/l (Urbano) | Auxílio elétrico curto</td>
+              <td>SUV compacto híbrido pleno</td>
+            </tr>
+            <tr data-brand="JAECOO" data-type="HEV" data-trunk="410" data-power="224">
+              <td><strong>JAECOO</strong></td>
+              <td>5 SHS-H Prestige</td>
+              <td><span class="badge badge-hev">HEV</span></td>
+              <td class="price">R$ 179.990,00</td>
+              <td>410 L</td>
+              <td>224 cv / 301 Nm</td>
+              <td>15,5 km/l (Urbano) | Auxílio elétrico curto</td>
+              <td>Teto panorâmico, faróis Full LED e pacote ADAS</td>
+            </tr>
+            <tr data-brand="JAECOO" data-type="PHEV" data-trunk="500" data-power="339">
+              <td><strong>JAECOO</strong></td>
+              <td>7 SHS-P Elite</td>
+              <td><span class="badge badge-phev">PHEV</span></td>
+              <td class="price">R$ 189.990,00</td>
+              <td>500 L</td>
+              <td>339 cv combinados</td>
+              <td><strong>79 km</strong> 100% elétrico | ~1.200 km total</td>
+              <td>Tração integral inteligente</td>
+            </tr>
+
+            <!-- MG -->
+            <tr data-brand="MG" data-type="BEV" data-trunk="363" data-power="170">
+              <td><strong>MG</strong></td>
+              <td>MG4 Urban</td>
+              <td><span class="badge badge-bev">BEV</span></td>
+              <td class="price">R$ 129.990,00 – R$ 149.990,00</td>
+              <td>363 L</td>
+              <td>170 cv / 250 Nm</td>
+              <td>~300 - 350 km (100% elétrico)</td>
+              <td>Tração traseira</td>
+            </tr>
+            <tr data-brand="MG" data-type="BEV" data-trunk="453" data-power="170">
+              <td><strong>MG</strong></td>
+              <td>MG S5</td>
+              <td><span class="badge badge-bev">BEV</span></td>
+              <td class="price">R$ 198.800,00 – R$ 219.800,00</td>
+              <td>453 L</td>
+              <td>170 cv / 250 Nm</td>
+              <td>~350 - 400 km (100% elétrico)</td>
+              <td>SUV médio focado em conforto familiar</td>
+            </tr>
+
+            <!-- BYD -->
+            <tr data-brand="BYD" data-type="BEV" data-trunk="345" data-power="204">
+              <td><strong>BYD</strong></td>
+              <td>Dolphin SE</td>
+              <td><span class="badge badge-bev">BEV</span></td>
+              <td class="price">R$ 159.990,00</td>
+              <td>345 L</td>
+              <td>204 cv / 310 Nm</td>
+              <td>~330 km (100% elétrico - Inmetro)</td>
+              <td>Hatch elétrico tecnológico (Versão Special Edition)</td>
+            </tr>
+            <tr data-brand="BYD" data-type="BEV" data-trunk="265" data-power="177">
+              <td><strong>BYD</strong></td>
+              <td>Yuan Pro</td>
+              <td><span class="badge badge-bev">BEV</span></td>
+              <td class="price">R$ 182.990,00</td>
+              <td>265 L</td>
+              <td>177 cv / 290 Nm</td>
+              <td>~250 km (100% elétrico)</td>
+              <td>SUV compacto com posição alta de pilotagem</td>
+            </tr>
+            <tr data-brand="BYD" data-type="PHEV" data-trunk="455" data-power="197">
+              <td><strong>BYD</strong></td>
+              <td>ATTO 2 DM-i GS</td>
+              <td><span class="badge badge-phev">PHEV</span></td>
+              <td class="price">R$ 169.990,00</td>
+              <td>455 L</td>
+              <td>197 cv combinados</td>
+              <td><strong>~90 km</strong> 100% elétrico | >1.000 km total</td>
+              <td>Híbrido Plug-in Flex</td>
+            </tr>
+            <tr data-brand="BYD" data-type="PHEV" data-trunk="450" data-power="235">
+              <td><strong>BYD</strong></td>
+              <td>KING DM-i GS</td>
+              <td><span class="badge badge-phev">PHEV</span></td>
+              <td class="price">R$ 175.990,00</td>
+              <td>450 L</td>
+              <td>235 cv combinados</td>
+              <td><strong>120 km</strong> 100% elétrico (NEDC) | >1.100 km total</td>
+              <td>Sedã médio com alto rendimento</td>
+            </tr>
+
+            <!-- Leapmotor -->
+            <tr data-brand="Leapmotor" data-type="BEV" data-trunk="420" data-power="218">
+              <td><strong>Leapmotor</strong></td>
+              <td>B10 Elétrico</td>
+              <td><span class="badge badge-bev">BEV</span></td>
+              <td class="price">R$ 182.990,00</td>
+              <td>420 L</td>
+              <td>218 cv / 320 Nm</td>
+              <td>~400 km (100% elétrico)</td>
+              <td>Crossover com assistências ADAS avançadas</td>
+            </tr>
+            <tr data-brand="Leapmotor" data-type="REEV" data-trunk="350" data-power="218">
+              <td><strong>Leapmotor</strong></td>
+              <td>B10 Ultra-Híbrido</td>
+              <td><span class="badge badge-reev">REEV</span></td>
+              <td class="price">R$ 179.990,00</td>
+              <td>350 L</td>
+              <td>~218 cv</td>
+              <td><strong>~150 km</strong> 100% elétrico | ~1.000 km total</td>
+              <td>Motor a combustão atua primariamente como gerador</td>
+            </tr>
+
+            <!-- GAC -->
+            <tr data-brand="GAC" data-type="HEV" data-trunk="638" data-power="235">
+              <td><strong>GAC</strong></td>
+              <td>GS4 Hybrid</td>
+              <td><span class="badge badge-hev">HEV</span></td>
+              <td class="price">R$ 189.990,00</td>
+              <td>638 L</td>
+              <td>235 cv combinados</td>
+              <td>~16 km/l (Urbano) | Auxílio elétrico curto</td>
+              <td>SUV médio focado em rodagem silenciosa</td>
+            </tr>
+            <tr data-brand="GAC" data-type="BEV" data-trunk="340" data-power="136">
+              <td><strong>GAC</strong></td>
+              <td>AION UT</td>
+              <td><span class="badge badge-bev">BEV</span></td>
+              <td class="price">R$ 139.990,00 – R$ 159.990,00</td>
+              <td>340 L</td>
+              <td>136 cv / 210 Nm</td>
+              <td>~350 km (100% elétrico)</td>
+              <td>Hatch futurista com ótimo acabamento interno</td>
+            </tr>
+            <tr data-brand="GAC" data-type="BEV" data-trunk="453" data-power="136">
+              <td><strong>GAC</strong></td>
+              <td>AION ES</td>
+              <td><span class="badge badge-bev">BEV</span></td>
+              <td class="price">R$ 170.990,00</td>
+              <td>453 L</td>
+              <td>136 cv / 225 Nm</td>
+              <td>~400 km (100% elétrico)</td>
+              <td>Sedã médio focado em amplo espaço traseiro</td>
+            </tr>
+            <tr data-brand="GAC" data-type="BEV" data-trunk="361" data-power="204">
+              <td><strong>GAC</strong></td>
+              <td>AION Y</td>
+              <td><span class="badge badge-bev">BEV</span></td>
+              <td class="price">R$ 175.990,00</td>
+              <td>361 L</td>
+              <td>204 cv / 225 Nm</td>
+              <td>~430 km (100% elétrico)</td>
+              <td>Formato monovolume com excelente cabine</td>
+            </tr>
+
+            <!-- Geely -->
+            <tr data-brand="Geely" data-type="BEV" data-trunk="375" data-power="116">
+              <td><strong>Geely</strong></td>
+              <td>EX2 PRO</td>
+              <td><span class="badge badge-bev">BEV</span></td>
+              <td class="price">R$ 124.600,00</td>
+              <td>375 L</td>
+              <td>116 cv / 150 Nm</td>
+              <td>~300 km (100% elétrico)</td>
+              <td>Hatch de entrada urbano com tração traseira</td>
+            </tr>
+            <tr data-brand="Geely" data-type="BEV" data-trunk="375" data-power="116">
+              <td><strong>Geely</strong></td>
+              <td>EX2 MAX</td>
+              <td><span class="badge badge-bev">BEV</span></td>
+              <td class="price">R$ 137.800,00</td>
+              <td>375 L (+70L Frunk)</td>
+              <td>116 cv / 150 Nm</td>
+              <td>~300 km (100% elétrico)</td>
+              <td>Versão topo de linha com mais recursos de segurança e conforto</td>
+            </tr>
+            <tr data-brand="Geely" data-type="PHEV" data-trunk="461" data-power="218">
+              <td><strong>Geely</strong></td>
+              <td>EX5 EM-i PRO</td>
+              <td><span class="badge badge-phev">PHEV</span></td>
+              <td class="price">R$ 191.490,00</td>
+              <td>461 L</td>
+              <td>218 cv combinados</td>
+              <td><strong>112 km</strong> 100% elétrico (Inmetro) | >1.200 km total</td>
+              <td>SUV médio híbrido de alcance estendido</td>
+            </tr>
+          </tbody>
+        </table>
+        <div id="noResults" class="no-results">
+          Nenhum veículo encontrado com os filtros selecionados.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function filterData() {
+        const searchInput = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const brandFilter = document.getElementById("brandFilter").value;
+        const typeFilter = document.getElementById("typeFilter").value;
+        const sortValue = document.getElementById("sortSelect").value;
+
+        const table = document.getElementById("carTable");
+        const tbody = table.getElementsByTagName("tbody")[0];
+        const rowsArray = Array.from(tbody.getElementsByTagName("tr"));
+        let visibleCount = 0;
+
+        // 1. Filtrar linhas
+        rowsArray.forEach((row) => {
+          const text = row.innerText.toLowerCase();
+          const brand = row.getAttribute("data-brand");
+          const type = row.getAttribute("data-type");
+
+          const matchesSearch = text.includes(searchInput);
+          const matchesBrand = brandFilter === "" || brand === brandFilter;
+          const matchesType = typeFilter === "" || type === typeFilter;
+
+          if (matchesSearch && matchesBrand && matchesType) {
+            row.style.display = "";
+            visibleCount++;
+          } else {
+            row.style.display = "none";
+          }
+        });
+
+        // 2. Ordenar linhas se uma opção estiver selecionada
+        if (sortValue) {
+          rowsArray.sort((a, b) => {
+            if (sortValue === "price-asc" || sortValue === "price-desc") {
+              const priceAStr = a
+                .querySelector(".price")
+                .innerText.replace("R$", "")
+                .trim()
+                .split("–")[0]
+                .replace(/\./g, "")
+                .replace(",", ".");
+              const priceBStr = b
+                .querySelector(".price")
+                .innerText.replace("R$", "")
+                .trim()
+                .split("–")[0]
+                .replace(/\./g, "")
+                .replace(",", ".");
+              const priceA = parseFloat(priceAStr) || 0;
+              const priceB = parseFloat(priceBStr) || 0;
+
+              return sortValue === "price-asc" ? priceA - priceB : priceB - priceA;
+            } else if (sortValue === "trunk-desc") {
+              const trunkA = parseFloat(a.getAttribute("data-trunk")) || 0;
+              const trunkB = parseFloat(b.getAttribute("data-trunk")) || 0;
+              return trunkB - trunkA;
+            } else if (sortValue === "power-desc") {
+              const powerA = parseFloat(a.getAttribute("data-power")) || 0;
+              const powerB = parseFloat(b.getAttribute("data-power")) || 0;
+              return powerB - powerA;
+            } else if (sortValue === "brand") {
+              const brandA = a.getAttribute("data-brand");
+              const brandB = b.getAttribute("data-brand");
+              return brandA.localeCompare(brandB);
+            } else if (sortValue === "type") {
+              const typeA = a.getAttribute("data-type");
+              const typeB = b.getAttribute("data-type");
+              return typeA.localeCompare(typeB);
+            }
+            return 0;
+          });
+
+          // Reorganiza os elementos no DOM mantendo a ordem calculada
+          rowsArray.forEach((row) => tbody.appendChild(row));
+        }
+
+        // 3. Exibir mensagem de nenhum resultado
+        const noResults = document.getElementById("noResults");
+        if (visibleCount === 0) {
+          noResults.style.display = "block";
+        } else {
+          noResults.style.display = "none";
+        }
+      }
+    </script>
+
+  </body>
+</html>
